@@ -8,21 +8,19 @@
 #include "../lib/mem.h"
 
 struct MemoryBloc{
-    void* addr;
-    int size;
+    size_t size;
     MemoryBloc* next;
-    MemoryBloc* prev;
-
 };
 
 
 class MemoryAllocator {
 public:
     void memAlloc();
-    void* mem_alloc (uint64);
+    void* mem_alloc (size_t);
     int mem_free (void*);
 private:
     static MemoryBloc* freeMemBlocHead;
+    static MemoryBloc* takenMemBlocHead;
 };
 
 
