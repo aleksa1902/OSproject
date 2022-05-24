@@ -7,8 +7,10 @@
 #include "../h/print.hpp"
 #include "../h/tcb.hpp"
 #include "../h/riscv.hpp"
+#include "../h/MemoryAllocator.hpp"
 
 int main() {
+    MemoryAllocator::memAlloc();
     TCB *threads[5];
     threads[0] = TCB::createThread(nullptr);
     TCB::running = threads[0];

@@ -17,26 +17,64 @@ void MemoryAllocator::memAlloc(){
 }
 
 void* MemoryAllocator::mem_alloc (size_t size){
-    MemoryBloc* curr = freeMemBlocHead;
-
-    // trazim prvi slobodan blok u listi slobodnih blokova gde mogu da alociram
-    while(size > curr->size){
-        curr = curr->next;
-    }
-
-    // novi alocirani blok
-    MemoryBloc* newBloc;
+    size_t newSize;
 
     // ako je velicina veca od MEM_BLOC_SIZE onda uzmi blokova koliko ti treba + sizeof(MemoryBloc)
     // u suprotnom samo MEM_BLOC_SIZE + sizeof(MemoryBloc)
     if(size > MEM_BLOCK_SIZE){
-        newBloc->size = ((size / MEM_BLOCK_SIZE) + 1) * MEM_BLOCK_SIZE + sizeof(MemoryBloc);
+        newSize = ((size / MEM_BLOCK_SIZE) + 1) * MEM_BLOCK_SIZE + sizeof(MemoryBloc);
     }else{
-        newBloc->size = MEM_BLOCK_SIZE + sizeof(MemoryBloc);
+        newSize = MEM_BLOCK_SIZE + sizeof(MemoryBloc);
     }
 
-    // newBloc sada dobija adresu curr
+    // trazim prvi slobodan blok u listi slobodnih blokova gde mogu da alociram
+    MemoryBloc* curr = freeMemBlocHead;
+
+    while(newSize > curr->size && curr != nullptr){
+        curr = curr->next;
+    }
+
+    if(curr == nullptr){
+        return nullptr;
+    }
+
+    bool checkFree = false;
+    if(curr == freeMemBlocHead){
+        checkFree = true;
+    }
+
+    // zapamti
+    MemoryBloc* next = curr->next;
+    size_t currSize = curr->size - newSize;
+
+    // novi alocirani blok
+    MemoryBloc* newBloc;
     newBloc = curr;
+
+    // ja ovde proveravam da li sam ispraznio blok
+    if(currSize == 0){
+        // prethoni mi treba
+        MemoryBloc* currFree = freeMemBlocHead;
+        while(currFree != nullptr && currFree->next != curr && checkFree != true){
+            currFree = currFree->next;
+        }
+
+        if(currFree == freeMemBlocHead){
+            freeMemBlocHead = freeMemBlocHead->next;
+        }else {
+            currFree->next = curr->next;
+        }
+    }else if(checkFree == true){
+        freeMemBlocHead = (MemoryBloc*)((char*)freeMemBlocHead + newSize);
+        freeMemBlocHead->size = currSize;
+        freeMemBlocHead->next = next;
+    }else{
+        curr = (MemoryBloc*)((char*)curr + newSize);
+        curr->size = currSize;
+        curr->next = next;
+    }
+
+    newBloc->size = newSize;
 
     // ako ne postoji ni jedan zauzet blok, dodaj mu newBloc
     if(takenMemBlocHead == nullptr){
@@ -60,37 +98,20 @@ void* MemoryAllocator::mem_alloc (size_t size){
         }
     }
 
-    curr->size -= newBloc->size;
-
-    if(curr->size == 0){
-        MemoryBloc* currFree = freeMemBlocHead;
-        while(currFree->next != curr){
-            currFree = currFree->next;
-        }
-
-        if(currFree == freeMemBlocHead){
-            freeMemBlocHead = freeMemBlocHead->next;
-        }else {
-            currFree->next = curr->next;
-        }
-    }else{
-        curr += newBloc->size;
-    }
-
-    return (void*)(newBloc - sizeof(MemoryBloc));
+    return (void*)((char*)newBloc + sizeof(MemoryBloc));
 };
 
 int MemoryAllocator::mem_free (void* mem){
-    void* freeCurr = (void*)(mem + sizeof(MemoryBloc));
+    void* freeCurr = (void*)((char*)mem - sizeof(MemoryBloc));
 
     MemoryBloc* curr = takenMemBlocHead;
     MemoryBloc* prev = nullptr;
 
-    while (curr == freeCurr){
+    while (curr != freeCurr){
         prev = curr;
         curr = curr->next;
     }
-
+    // uraditi nepredvidjeno ponasanje ako hocu da dealociram nesto sto nisam alocirao
     if(curr == takenMemBlocHead){
         takenMemBlocHead = takenMemBlocHead->next;
     }else{
@@ -120,7 +141,7 @@ int MemoryAllocator::mem_free (void* mem){
     MemoryBloc* currMemMerge = freeMemBlocHead;
 
     while(currMemMerge){
-        if(currMemMerge->next != nullptr && currMemMerge + currMemMerge->size == currMemMerge->next){
+        if(currMemMerge->next != nullptr && (char*)currMemMerge + currMemMerge->size == (char*)currMemMerge->next){
             currMemMerge->size += currMemMerge->next->size;
             currMemMerge->next = currMemMerge->next->next;
         }else{

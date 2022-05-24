@@ -15,9 +15,9 @@ struct MemoryBloc{
 
 class MemoryAllocator {
 public:
-    void memAlloc();
-    void* mem_alloc (size_t);
-    int mem_free (void*);
+    static void memAlloc();
+    static void* mem_alloc (size_t);
+    static int mem_free (void*);
 private:
     static MemoryBloc* freeMemBlocHead;
     static MemoryBloc* takenMemBlocHead;
