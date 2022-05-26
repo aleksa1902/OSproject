@@ -20,7 +20,7 @@ void Riscv::handleSupervisorTrap() {
 
     if(argument0 != 0 && scause == 0x0000000000000009UL){
         // prekopirano od mickovog koda
-        uint64 sepc = r_sepc(); uint64 sstatus = r_sstatus();
+        uint64 sepc = r_sepc() + 4; uint64 sstatus = r_sstatus();
 
         // syscall za mem_alloc, argument je 1
         if(argument0 == 1){

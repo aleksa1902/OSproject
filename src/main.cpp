@@ -12,6 +12,9 @@
 int main() {
     MemoryAllocator::memAlloc();
     TCB *threads[5];
+
+    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
+
     threads[0] = TCB::createThread(nullptr);
     TCB::running = threads[0];
     threads[1] = TCB::createThread(workerBodyA);
@@ -23,7 +26,6 @@ int main() {
     threads[4] = TCB::createThread(workerBodyD);
     printString("ThreadD created\n");
 
-    Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
 
     while (!(threads[1]->isFinished() && threads[2]->isFinished() &&

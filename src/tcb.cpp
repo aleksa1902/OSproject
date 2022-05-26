@@ -23,8 +23,10 @@ void TCB::yield() { __asm__ volatile ("ecall"); }
 
 void TCB::dispatch() {
     TCB *old = running;
+    uint64 sstatus = Riscv::r_sstatus();
     if (!old->isFinished()) { Scheduler::put(old); }
     running = Scheduler::get();
+    Riscv::w_sstatus(sstatus);
     TCB::contextSwitch(&old->context, &running->context);
 }
 

@@ -4,7 +4,7 @@
 #include "../h/syscall_c.hpp"
 
 void* mem_alloc(size_t size){
-    size_t arg = 0;
+    size_t arg = 60;
     size_t num = 1;
 
     __asm__ volatile("mv %0, a0" : "=r" (arg));
