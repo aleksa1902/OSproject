@@ -8,6 +8,7 @@
 #include "../h/tcb.hpp"
 #include "../h/riscv.hpp"
 #include "../h/MemoryAllocator.hpp"
+#include "../h/syscall_c.hpp"
 
 int main() {
     MemoryAllocator::memAlloc();
@@ -15,15 +16,15 @@ int main() {
 
     Riscv::w_stvec((uint64) &Riscv::supervisorTrap);
 
-    threads[0] = TCB::createThread(nullptr);
+    thread_create(&threads[0], nullptr, nullptr);
     TCB::running = threads[0];
-    threads[1] = TCB::createThread(workerBodyA);
+    thread_create(&threads[1], workerBodyA, nullptr);
     printString("ThreadA created\n");
-    threads[2] = TCB::createThread(workerBodyB);
+    thread_create(&threads[2], workerBodyB, nullptr);
     printString("ThreadB created\n");
-    threads[3] = TCB::createThread(workerBodyC);
+    thread_create(&threads[3], workerBodyC, nullptr);
     printString("ThreadC created\n");
-    threads[4] = TCB::createThread(workerBodyD);
+    thread_create(&threads[4], workerBodyD, nullptr);
     printString("ThreadD created\n");
 
     Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
