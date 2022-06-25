@@ -50,8 +50,6 @@ int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg){
 
     __asm__ volatile("ecall");
 
-    __asm__ volatile("mv %0, a0" : "=r" (handle));
-
     return 1;
 }
 

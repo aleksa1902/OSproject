@@ -12,7 +12,7 @@ void* mem_alloc (size_t size); //0x01
 
 int mem_free (void* addr); //0x02
 
-class _thread;
+//class _thread;
 typedef TCB* thread_t;
 int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg); //0x11
 

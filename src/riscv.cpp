@@ -6,6 +6,7 @@
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/syscall_c.hpp"
+#include "../h/print.hpp"
 
 void Riscv::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -40,7 +41,7 @@ void Riscv::handleSupervisorTrap() {
             MemoryAllocator::mem_free(argument_void);
         }else if(argument0 == 11){
             // create_thread
-            thread_t handler = 0;
+            thread_t* handler;
             TCB::Body sr = 0;
             void* arg = 0;
 
@@ -48,16 +49,14 @@ void Riscv::handleSupervisorTrap() {
             __asm__ volatile("mv %0, a2" : "=r" (sr));
             __asm__ volatile("mv %0, a3" : "=r" (arg));
 
-            handler = TCB::createThread(sr);
-
-            __asm__ volatile("mv a0, %0" : : "r" (handler));
-
+            *handler = TCB::createThread(sr);
 
         }else if(argument0 == 12){
             //thread exit nema nikakve argumente samo pozove funkciju ima povratnu vrednost
 
         }else if(argument0 == 13){
             // thread_dispatch i on ne prima nikakve argumente
+            TCB::dispatch();
         }
 
 
@@ -85,5 +84,9 @@ void Riscv::handleSupervisorTrap() {
     } else {
         // unexpected trap cause
         // definisati
+        if (scause == 0x0000000000000005UL){
+            printString("Error 5\n");
+        }
+
     }
 }

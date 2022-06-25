@@ -31,10 +31,9 @@ int main() {
 
     while (!(threads[1]->isFinished() && threads[2]->isFinished() &&
              threads[3]->isFinished() && threads[4]->isFinished())) {
-        TCB::yield();
+        thread_dispatch();
     }
     for (auto &thread: threads) { delete thread; }
     printString("Finished\n");
     return 0;
 }
-
