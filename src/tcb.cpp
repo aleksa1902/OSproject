@@ -17,7 +17,9 @@ context({(uint64) &threadWrapper,
 timeSlice(timeSlice),
 finished(false) { if (body != nullptr) { Scheduler::put(this); } }
 
-TCB *TCB::createThread(Body body) { return new TCB(body, TIME_SLICE); }
+TCB *TCB::createThread(Body body) {
+    return new TCB(body, TIME_SLICE);
+}
 
 void TCB::yield() { __asm__ volatile ("ecall"); }
 

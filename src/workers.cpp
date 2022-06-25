@@ -8,7 +8,7 @@
 #include "../h/tcb.hpp"
 
 
-void workerBodyA() {
+void workerBodyA(void *pVoid) {
     for (uint64 i = 0; i < 10; i++) {
         printString("A: i="); printInteger(i); printString("\n");
         for (uint64 j = 0; j < 10000; j++) {
@@ -18,7 +18,7 @@ void workerBodyA() {
     }
 }
 
-void workerBodyB() {
+void workerBodyB(void *pVoid) {
     for (uint64 i = 0; i < 16; i++) {
         printString("B: i="); printInteger(i); printString("\n");
         for (uint64 j = 0; j < 10000; j++) {
@@ -33,7 +33,7 @@ uint64 fibonacci(uint64 n) {
     if (n % 10 == 0) { TCB::yield(); }
     return fibonacci(n - 1) + fibonacci(n - 2);
 }
-void workerBodyC() {
+void workerBodyC(void *pVoid) {
     uint8 i = 0;
     for (; i < 3; i++) {
         printString("C: i="); printInteger(i); printString("\n");
@@ -56,7 +56,7 @@ void workerBodyC() {
     }
 //    TCB::yield();
 }
-void workerBodyD() {
+void workerBodyD(void *pVoid) {
     uint8 i = 10;
     for (; i < 13; i++) {
         printString("D: i="); printInteger(i); printString("\n");
@@ -74,7 +74,5 @@ void workerBodyD() {
     }
 //    TCB::yield();
 }
-
-
 
 

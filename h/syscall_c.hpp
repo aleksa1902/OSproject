@@ -6,13 +6,14 @@
 #define OSPROJECT_SYSCALL_C_HPP
 
 #include "../lib/hw.h"
+#include "tcb.hpp"
 
 void* mem_alloc (size_t size); //0x01
 
 int mem_free (void* addr); //0x02
 
-class _thread;
-typedef _thread* thread_t;
+//class _thread;
+typedef TCB* thread_t;
 int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg); //0x11
 
 int thread_exit (); //0x12
