@@ -17,6 +17,7 @@ class TCB {
         static TCB *createThread(Body body);
         static void yield();
         static TCB *running;
+        bool checkBody();
         private:
         TCB(Body body, uint64 timeSlice);
 

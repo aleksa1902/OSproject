@@ -15,7 +15,7 @@ stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
 context({(uint64) &threadWrapper,
          stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0 }),
 timeSlice(timeSlice),
-finished(false) { if (body != nullptr) { Scheduler::put(this); } }
+finished(false) { }
 
 TCB *TCB::createThread(Body body) {
     return new TCB(body, TIME_SLICE);
@@ -37,4 +37,12 @@ void TCB::threadWrapper() {
     running->body();
     running->setFinished(true);
     TCB::yield();
+}
+
+bool TCB::checkBody() {
+    if(this->body != nullptr){
+        return true;
+    }else{
+        return false;
+    }
 }
