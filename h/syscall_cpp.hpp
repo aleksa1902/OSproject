@@ -9,13 +9,17 @@
 
 class Thread {
 public:
-    Thread (void (*body)(void*), void* arg);
-    virtual ~Thread ();
+    Thread (void (*body)(void*), void* arg) {
+        thread_create(&myHandle, body, arg);
+    }
+    virtual ~Thread () { delete myHandle; }
     int start ();
     static void dispatch ();
     static int sleep (time_t);
 protected:
-    Thread ();
+    Thread () {
+        thread_create(&myHandle, nullptr, nullptr);
+    }
     virtual void run () {}
 private:
     thread_t myHandle;
