@@ -2,7 +2,6 @@
 // Created by os on 5/22/22.
 //
 #include "../h/syscall_c.hpp"
-#include "../h/tcb.hpp"
 
 void* mem_alloc(size_t size){
     size_t arg = 60;

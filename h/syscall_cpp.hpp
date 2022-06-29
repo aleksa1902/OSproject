@@ -7,27 +7,33 @@
 
 #include "syscall_c.hpp"
 
+class TCB;
+typedef TCB* thread_t;
+
+class KernelSem;
+typedef KernelSem* sem_t;
+
 class Thread {
 public:
-    Thread (void (*body)(void*), void* arg) {
-        thread_create(&myHandle, body, arg);
-    }
-    virtual ~Thread () { delete myHandle; }
+    Thread (void (*body)(void*), void* arg);
+    virtual ~Thread ();
     int start ();
     static void dispatch ();
     static int sleep (time_t);
 protected:
-    Thread () {
-        thread_create(&myHandle, nullptr, nullptr);
-    }
+    Thread ();
     virtual void run () {}
 private:
+    friend class TCB;
     thread_t myHandle;
 };
 class Semaphore {
 public:
     Semaphore (unsigned init = 1);
-    virtual ~Semaphore ();
+
+    virtual ~Semaphore (){
+        //delete myHandle;
+    }
     int wait ();
     int signal ();
 private:

@@ -53,6 +53,8 @@ void Riscv::handleSupervisorTrap() {
 
         }else if(argument0 == 12){
             //thread exit nema nikakve argumente samo pozove funkciju ima povratnu vrednost
+            TCB::running->setFinished(true);
+            thread_dispatch();
 
         }else if(argument0 == 13){
             // thread_dispatch i on ne prima nikakve argumente

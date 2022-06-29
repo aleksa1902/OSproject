@@ -5,18 +5,20 @@
 #include "../h/tcb.hpp"
 #include "../h/scheduler.hpp"
 #include "../h/riscv.hpp"
+#include "../h/print.hpp"
 
 
 TCB *TCB::running = nullptr;
 uint64 TCB::timeSliceCounter = 0;
 
 TCB::TCB(Body body, uint64 timeSlice) : body(body),
-stack(body != nullptr ? new uint64[STACK_SIZE] : nullptr),
+stack(/*body != nullptr ?*/ new uint64[STACK_SIZE] /* : nullptr */),
 context({(uint64) &threadWrapper,
-         stack != nullptr ? (uint64) &stack[STACK_SIZE] : 0 }),
+         /*stack != nullptr ? */(uint64) &stack[STACK_SIZE] /* : 0 */}),
 timeSlice(timeSlice),
-finished(false) {
+finished(false), blocked(false) {
     if (body != nullptr) { Scheduler::put(this); }
+    myThread = nullptr;
 }
 
 TCB *TCB::createThread(Body body) {
@@ -36,15 +38,31 @@ void TCB::dispatch() {
 
 void TCB::threadWrapper() {
     Riscv::popSppSpie();
-    running->body();
+    if(running->myThread != nullptr){
+        running->myThread->run();
+    }
+    thread_exit();
+    /*running->body();
     running->setFinished(true);
-    TCB::yield();
+    TCB::yield();*/
+
 }
 
 bool TCB::checkBody() {
     if(this->body != nullptr){
+        printString("Imam body.\n");
         return true;
     }else{
+        printString("Nemam body.\n");
         return false;
     }
 }
+
+void TCB::setBody(TCB::Body body) {
+    this->body = body;
+}
+
+/*void TCB::exitTCB() {
+    running->setFinished(true);
+    thread_dispatch();
+}*/
