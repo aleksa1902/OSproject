@@ -7,12 +7,13 @@
 
 #include "../lib/hw.h"
 #include "tcb.hpp"
+#include "KernelSem.hpp"
 
 void* mem_alloc (size_t size); //0x01
 
 int mem_free (void* addr); //0x02
 
-//class _thread;
+class TCB;
 typedef TCB* thread_t;
 int thread_create (thread_t* handle, void(*start_routine)(void*), void* arg); //0x11
 
@@ -20,8 +21,8 @@ int thread_exit (); //0x12
 
 void thread_dispatch (); //0x13
 
-class _sem;
-typedef _sem* sem_t;
+class KernelSem;
+typedef KernelSem* sem_t;
 int sem_open (sem_t* handle, unsigned init); // 0x21
 
 int sem_close (sem_t handle); //0x22
