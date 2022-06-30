@@ -12,9 +12,9 @@ TCB *TCB::running = nullptr;
 uint64 TCB::timeSliceCounter = 0;
 
 TCB::TCB(Body body, uint64 timeSlice) : body(body),
-stack(/*body != nullptr ?*/ new uint64[STACK_SIZE] /* : nullptr */),
+stack(new uint64[STACK_SIZE]),
 context({(uint64) &threadWrapper,
-         /*stack != nullptr ? */(uint64) &stack[STACK_SIZE] /* : 0 */}),
+         (uint64) &stack[STACK_SIZE]}),
 timeSlice(timeSlice),
 finished(false), blocked(false) {
     if (body != nullptr) { Scheduler::put(this); }
@@ -30,7 +30,7 @@ void TCB::yield() { __asm__ volatile ("ecall"); }
 void TCB::dispatch() {
     TCB *old = running;
     uint64 sstatus = Riscv::r_sstatus();
-    if (!old->isFinished()) { Scheduler::put(old); }
+    if (!old->isBlocked() && !old->isFinished()) { Scheduler::put(old); }
     running = Scheduler::get();
     Riscv::w_sstatus(sstatus);
     TCB::contextSwitch(&old->context, &running->context);
@@ -62,7 +62,7 @@ void TCB::setBody(TCB::Body body) {
     this->body = body;
 }
 
-/*void TCB::exitTCB() {
+void TCB::exitTCB() {
     running->setFinished(true);
     thread_dispatch();
-}*/
+}

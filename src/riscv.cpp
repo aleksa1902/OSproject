@@ -3,6 +3,7 @@
 //
 #include "../h/riscv.hpp"
 #include "../h/tcb.hpp"
+#include "../h/KernelSem.hpp"
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
 #include "../h/syscall_c.hpp"
@@ -59,6 +60,39 @@ void Riscv::handleSupervisorTrap() {
         }else if(argument0 == 13){
             // thread_dispatch i on ne prima nikakve argumente
             TCB::dispatch();
+        }else if(argument0 == 21){
+            // sem_open
+            sem_t* arg1 = 0;
+            unsigned arg2 = 0;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+            __asm__ volatile("mv %0, a2" : "=r" (arg2));
+
+            *arg1 = KernelSem::createSem(arg2);
+
+        }else if(argument0 == 22){
+            // sem_close
+
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->freeSem();
+
+        }else if(argument0 == 23){
+            // sem_wait
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->wait();
+        }else if(argument0 == 24){
+            // sem_signal
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->signal();
         }
 
 

@@ -43,4 +43,5 @@ int Semaphore::signal() {
 
 Semaphore::Semaphore(unsigned int init) {
     sem_open(&myHandle, init);
+    myHandle->mySemaphore = this;
 }

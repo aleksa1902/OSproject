@@ -26,7 +26,7 @@ class TCB {
         void setBlocked() { blocked = true; }
         void unblock() { blocked = false; }
         void setBody(Body body);
-        void exitTCB();
+        static void exitTCB();
         private:
         TCB(Body body, uint64 timeSlice);
 
