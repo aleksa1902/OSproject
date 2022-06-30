@@ -43,4 +43,18 @@ int Semaphore::signal() {
 
 Semaphore::Semaphore(unsigned int init) {
     sem_open(&myHandle, init);
+    myHandle->mySemaphore = this;
+}
+
+Semaphore::~Semaphore() {
+    delete myHandle;
+}
+
+char Console::getc() {
+    char c = ::getc();
+    return c;
+}
+
+void Console::putc(char c) {
+    ::putc(c);
 }

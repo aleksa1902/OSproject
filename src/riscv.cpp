@@ -1,12 +1,11 @@
 //
-// Created by os on 4/26/22.
+// Created by os on 5/12/22.
 //
 #include "../h/riscv.hpp"
 #include "../h/tcb.hpp"
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
-#include "../h/syscall_c.hpp"
-#include "../h/print.hpp"
+#include "../h/printing.hpp"
 
 void Riscv::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -21,8 +20,8 @@ void Riscv::handleSupervisorTrap() {
     __asm__ volatile("mv %0, a0" : "=r" (argument0));
 
     if(argument0 != 0 && scause == 0x0000000000000009UL){
-        // prekopirano od mickovog koda
-        uint64 sepc = r_sepc() + 4; uint64 sstatus = r_sstatus();
+        // prekopirano od mickovog koda sa laba jedino ovako hoce da radi
+                uint64 sepc = r_sepc() + 4; uint64 sstatus = r_sstatus();
 
 
         if(argument0 == 1){ // syscall za mem_alloc
@@ -53,14 +52,59 @@ void Riscv::handleSupervisorTrap() {
 
         }else if(argument0 == 12){
             //thread exit nema nikakve argumente samo pozove funkciju ima povratnu vrednost
-            TCB::running->setFinished(true);
-            thread_dispatch();
+            TCB::exitTCB();
 
         }else if(argument0 == 13){
             // thread_dispatch i on ne prima nikakve argumente
             TCB::dispatch();
-        }
+        }else if(argument0 == 21){
+            // sem_open
+            sem_t* arg1 = 0;
+            unsigned arg2 = 0;
 
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+            __asm__ volatile("mv %0, a2" : "=r" (arg2));
+
+            *arg1 = KernelSem::createSem(arg2);
+
+        }else if(argument0 == 22){
+            // sem_close
+
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->freeSem();
+
+        }else if(argument0 == 23){
+            // sem_wait
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->wait();
+        }else if(argument0 == 24){
+            // sem_signal
+            sem_t arg1;
+
+            __asm__ volatile("mv %0, a1" : "=r" (arg1));
+
+            arg1->signal();
+        }else if(argument0 == 41){
+            // getc
+            char ret;
+            ret = __getc();
+
+            __asm__ volatile("mv a0, %0" : : "r" (ret));
+
+        }else if(argument0 == 42){
+            // putc
+            char c;
+
+            __asm__ volatile("mv %0, a1" : "=r" (c));
+
+            __putc(c);
+        }
 
         w_sstatus(sstatus); w_sepc(sepc);
     }
@@ -85,10 +129,20 @@ void Riscv::handleSupervisorTrap() {
         console_handler();
     } else {
         // unexpected trap cause
-        // definisati
+        if (scause == 0x0000000000000002UL){
+            printString("Error 2\n");
+        }
         if (scause == 0x0000000000000005UL){
             printString("Error 5\n");
         }
-
+        if (scause == 0x0000000000000007UL){
+            printString("Error 7\n");
+        }
+        if (scause == 0x0000000000000008UL){
+            printString("Error 8\n");
+        }
+        if (scause == 0x0000000000000009UL){
+            printString("Error 9\n");
+        }
     }
 }

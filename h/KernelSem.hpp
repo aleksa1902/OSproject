@@ -6,26 +6,27 @@
 #define OSPROJECT_KERNELSEM_HPP
 
 #include "list.hpp"
-#include "syscall_c.hpp"
+#include "syscall_cpp.hpp"
+
+class Semaphore;
+
+class TCB;
 
 class KernelSem{
 public:
-    int value;
-    //List<thread_t> listWait;
-
-    //KernelSem(Semaphore* sem, int init=1){
-    //    this->value = init;
-    //    this->sem = sem;
-        //this->listWait = new List<thread_t>();
-    //}
+    KernelSem(int init);
+    static KernelSem *createSem(int init);
     virtual ~KernelSem ();
     int wait ();
     int signal();
     int val () const;
+    void freeSem();
 
 private:
     friend class Semaphore;
-    //Semaphore* sem;
+    Semaphore* mySemaphore;
+    int value;
+    List<TCB> listWait;
 };
 
 #endif //OSPROJECT_KERNELSEM_HPP

@@ -6,6 +6,9 @@
 #define OSPROJECT_SYSCALL_CPP_HPP
 
 #include "syscall_c.hpp"
+#include "KernelSem.hpp"
+#include "../lib/hw.h"
+
 
 class TCB;
 typedef TCB* thread_t;
@@ -31,14 +34,14 @@ class Semaphore {
 public:
     Semaphore (unsigned init = 1);
 
-    virtual ~Semaphore (){
-        //delete myHandle;
-    }
+    virtual ~Semaphore ();
     int wait ();
     int signal ();
 private:
+    friend class KernelSem;
     sem_t myHandle;
 };
+
 class PeriodicThread : public Thread {
 protected:
     PeriodicThread (time_t period);

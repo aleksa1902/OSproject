@@ -1,9 +1,9 @@
 //
-// Created by os on 4/26/22.
+// Created by os on 5/12/22.
 //
 
-#ifndef PROJECT_BASE_V1_0_RISCV_HPP
-#define PROJECT_BASE_V1_0_RISCV_HPP
+#ifndef OSPROJECT_RISCV_HPP
+#define OSPROJECT_RISCV_HPP
 
 #include "../lib/hw.h"
 
@@ -138,4 +138,4 @@ inline uint64 Riscv::r_sstatus() {
 inline void Riscv::w_sstatus(uint64 sstatus) {
     __asm__ volatile ("csrw sstatus, %[sstatus]" : : [sstatus] "r"(sstatus));
 }
-#endif //PROJECT_BASE_V1_0_RISCV_HPP
+#endif //OSPROJECT_RISCV_HPP

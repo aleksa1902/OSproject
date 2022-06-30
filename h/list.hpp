@@ -1,9 +1,9 @@
 //
-// Created by os on 4/26/22.
+// Created by os on 5/12/22.
 //
 
-#ifndef PROJECT_BASE_V1_0_LIST_HPP
-#define PROJECT_BASE_V1_0_LIST_HPP
+#ifndef OSPROJECT_LIST_HPP
+#define OSPROJECT_LIST_HPP
 
 template<typename T>
 class List{
@@ -75,4 +75,4 @@ public:
     }
 };
 
-#endif //PROJECT_BASE_V1_0_LIST_HPP
+#endif //OSPROJECT_LIST_HPP
