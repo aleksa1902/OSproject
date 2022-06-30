@@ -7,6 +7,7 @@
 
 #include "syscall_c.hpp"
 #include "KernelSem.hpp"
+#include "../lib/hw.h"
 
 
 class TCB;

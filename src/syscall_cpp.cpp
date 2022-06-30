@@ -45,3 +45,12 @@ Semaphore::Semaphore(unsigned int init) {
     sem_open(&myHandle, init);
     myHandle->mySemaphore = this;
 }
+
+char Console::getc() {
+    char c = ::getc();
+    return c;
+}
+
+void Console::putc(char c) {
+    ::putc(c);
+}

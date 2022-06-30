@@ -8,7 +8,6 @@
 KernelSem::KernelSem(int init) {
     this->value = init;
     this->mySemaphore = nullptr;
-    this->listWait = new List<thread_t>();
 }
 
 KernelSem *KernelSem::createSem(int init) {
@@ -16,7 +15,7 @@ KernelSem *KernelSem::createSem(int init) {
 }
 
 KernelSem::~KernelSem() {
-    this->value = 0;
+    this->freeSem();
 }
 
 int KernelSem::val() const {
@@ -28,7 +27,7 @@ int KernelSem::wait() {
 
     if(value < 0){
         TCB::running->setBlocked();
-        listWait.addLast(&TCB::running);
+        listWait.addLast(TCB::running);
         thread_dispatch();
 
         return 1;
@@ -42,10 +41,10 @@ int KernelSem::signal() {
 
     if(value <= 0){
         if(listWait.peekFirst()){
-            thread_t *unblock = listWait.peekFirst();
+            thread_t unblock = listWait.peekFirst();
             listWait.removeFirst();
-            unblock.unblock();
-            Scheduler::put(*unblock);
+            unblock->setBlocked();
+            Scheduler::put(unblock);
             return 0;
         }
     }
@@ -54,10 +53,10 @@ int KernelSem::signal() {
 
 void KernelSem::freeSem() {
     while(listWait.peekFirst()){
-        thread_t *unblock = listWait.peekFirst();
+        thread_t unblock = listWait.peekFirst();
         listWait.removeFirst();
-        unblock.unblock();
-        Scheduler::put(*unblock);
+        unblock->unblock();
+        Scheduler::put(unblock);
     }
 
     value = 1; // diskutabilno

@@ -3,11 +3,9 @@
 //
 #include "../h/riscv.hpp"
 #include "../h/tcb.hpp"
-#include "../h/KernelSem.hpp"
 #include "../lib/console.h"
 #include "../h/MemoryAllocator.hpp"
-#include "../h/syscall_c.hpp"
-#include "../h/print.hpp"
+#include "../h/printing.hpp"
 
 void Riscv::popSppSpie() {
     __asm__ volatile ("csrw sepc, ra");
@@ -93,8 +91,21 @@ void Riscv::handleSupervisorTrap() {
             __asm__ volatile("mv %0, a1" : "=r" (arg1));
 
             arg1->signal();
-        }
+        }else if(argument0 == 41){
+            // getc
+            char ret;
+            ret = __getc();
 
+            __asm__ volatile("mv a0, %0" : : "r" (ret));
+
+        }else if(argument0 == 42){
+            // putc
+            char c;
+
+            __asm__ volatile("mv %0, a1" : "=r" (c));
+
+            __putc(c);
+        }
 
         w_sstatus(sstatus); w_sepc(sepc);
     }

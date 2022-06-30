@@ -11,7 +11,7 @@
 class Semaphore;
 
 class TCB;
-typedef TCB* thread_t;
+//typedef TCB* thread_t;
 
 class KernelSem{
 public:
@@ -27,7 +27,7 @@ private:
     friend class Semaphore;
     Semaphore* mySemaphore;
     int value;
-    List<thread_t> listWait;
+    List<TCB> listWait;
 };
 
 #endif //OSPROJECT_KERNELSEM_HPP
