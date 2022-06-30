@@ -1,9 +1,9 @@
 //
-// Created by os on 4/26/22.
+// Created by os on 5/12/22.
 //
 
-#ifndef PROJECT_BASE_V1_0_TCB_HPP
-#define PROJECT_BASE_V1_0_TCB_HPP
+#ifndef OSPROJECT_TCB_HPP
+#define OSPROJECT_TCB_HPP
 
 #include "../lib/hw.h"
 #include "../h/syscall_cpp.hpp"
@@ -20,7 +20,6 @@ class TCB {
         static TCB *createThread(Body body);
         static void yield();
         static TCB *running;
-
         bool checkBody();
         bool isBlocked() const { return blocked; }
         void setBlocked() { blocked = true; }
@@ -29,12 +28,15 @@ class TCB {
         static void exitTCB();
         private:
         TCB(Body body, uint64 timeSlice);
-
         struct Context { uint64 ra; uint64 sp; };
-        Body body; uint64 *stack; Context context; uint64 timeSlice; bool finished; bool blocked;
-
-        friend class Thread;
+        Body body;
+        uint64 *stack;
+        Context context;
+        uint64 timeSlice;
+        bool finished;
+        bool blocked;
         friend class Riscv;
+        friend class Thread;
         Thread* myThread;
 
         static void threadWrapper();
@@ -48,4 +50,4 @@ class TCB {
 };
 
 
-#endif //PROJECT_BASE_V1_0_TCB_HPP
+#endif //OSPROJECT_TCB_HPP

@@ -5,7 +5,7 @@
 #ifndef XV6_CONSUMERPRODUCER_CPP_Sync_API_TEST_H
 #define XV6_CONSUMERPRODUCER_CPP_Sync_API_TEST_H
 
-#include "syscall_cpp.hpp"
+#include "../h/syscall_cpp.hpp"
 
 #include "buffer_CPP_API.hpp"
 
@@ -133,7 +133,7 @@ void producerConsumer_CPP_Sync_API() {
     printString(".\n");
 
     if(threadNum > n) {
-        printString("Broj proizvodjaca ne sme biti manji od velicine bafera!\n");
+        printString("Broj proizvodjaca ne sme biti veci od velicine bafera!\n");
         return;
     } else if (threadNum < 1) {
         printString("Broj proizvodjaca mora biti veci od nula!\n");

@@ -1,5 +1,5 @@
 //
-// Created by os on 4/26/22.
+// Created by os on 5/12/22.
 //
 
 #include "../h/tcb.hpp"
@@ -64,5 +64,7 @@ void TCB::setBody(TCB::Body body) {
 
 void TCB::exitTCB() {
     running->setFinished(true);
+    //delete running;
+    // msm da ne treba jer mi svakako radimo delete na kraju svakog testa
     thread_dispatch();
 }

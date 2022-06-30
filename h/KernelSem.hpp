@@ -11,7 +11,6 @@
 class Semaphore;
 
 class TCB;
-//typedef TCB* thread_t;
 
 class KernelSem{
 public:
