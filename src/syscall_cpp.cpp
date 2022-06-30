@@ -46,6 +46,10 @@ Semaphore::Semaphore(unsigned int init) {
     myHandle->mySemaphore = this;
 }
 
+Semaphore::~Semaphore() {
+    delete myHandle;
+}
+
 char Console::getc() {
     char c = ::getc();
     return c;
