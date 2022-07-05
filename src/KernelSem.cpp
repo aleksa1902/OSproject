@@ -41,9 +41,8 @@ int KernelSem::signal() {
 
     if(value <= 0){
         if(listWait.peekFirst()){
-            thread_t unblock = listWait.peekFirst();
-            listWait.removeFirst();
-            unblock->setBlocked();
+            thread_t unblock = listWait.removeFirst();
+            unblock->unblock();
             Scheduler::put(unblock);
             return 0;
         }
@@ -53,8 +52,7 @@ int KernelSem::signal() {
 
 void KernelSem::freeSem() {
     while(listWait.peekFirst()){
-        thread_t unblock = listWait.peekFirst();
-        listWait.removeFirst();
+        thread_t unblock = listWait.removeFirst();
         unblock->unblock();
         Scheduler::put(unblock);
     }

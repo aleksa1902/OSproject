@@ -20,8 +20,8 @@ int main() {
     TCB::running = run;
 
     // maskiranje timeslice-a - 15ta strana u projektu
-    //__asm__ volatile ("csrc sie, %[mask]" : : [mask] "r"(2));
-    //Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
+    __asm__ volatile ("csrc sie, %[mask]" : : [mask] "r"(2));
+    Riscv::ms_sstatus(Riscv::SSTATUS_SIE);
 
     userMain();
 
