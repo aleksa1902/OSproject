@@ -42,10 +42,6 @@ void TCB::threadWrapper() {
         running->myThread->run();
     }
     thread_exit();
-    /*running->body();
-    running->setFinished(true);
-    TCB::yield();*/
-
 }
 
 bool TCB::checkBody() {
